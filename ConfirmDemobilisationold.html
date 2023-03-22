@@ -1,0 +1,405 @@
+﻿<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" />
+        <link rel="icon" href="favicon.ico">
+        <title>确认出场</title>
+        <script type="text/javascript" src="https://res2.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
+    </head>
+    <body>
+        <div style="background: #e5e7e5;min-height: 100vh;">
+            <div class="content-title">
+                <span>开启出入场通知，获取停车优惠</span>
+                <span style="background: #FFF;border-radius: 20px;color: red;padding: 2px 10px;cursor: pointer;" onclick="Mask(1)">关注公众号</span>
+            </div>
+            <div id="erweimaMask" onclick="Mask(0)">
+                <img src="./qrcode_for_gh_d8cb806d817b_860.jpg" width="136px" style="cursor: pointer;" alt="E停管家公众号">
+                <span id="img">长按识别二维码</span>
+            </div>
+            <div style="height: calc(100vh - 95px);overflow: auto;font-size: 15px;">
+                <div id="FeeArea" style="border-radius: 8px;overflow: hidden;width: calc(90% - 30px);margin: 30px auto;background: #FFF;padding: 15px;display: none;">
+                    <div style="text-align: center;font-size: 22px;">
+						<img id="CarImg" src='https://pay.szzkc.com/H5Test/imgaes/index-current.png' style="display: none;width: 70%;margin: auto;">
+                        <div id="CarNo" style="margin-bottom: 5px;"></div>
+                        <div id="CarMoney"></div>
+                    </div>
+                    <div style="border-top: 0.5px solid #e5e7e5;margin: 5px 0;"></div>
+					<div class="Parking-information-item">
+					    <span>本次停车费</span>
+					    <span id="CurrentExpenses"></span>
+					</div>
+                    <div id="TotalArrears" style="display: none;color: red;font-size: 15px;width: 100%;">
+                        <span id="Arrears"></span> &nbsp; 
+                        <wx-open-launch-weapp id="launch-btn" username="gh_4b1ee4a63c2d" style="display: flex;flex: 1;">
+                            <template>
+                                <div style="text-decoration: underline;color: red;font-size: 15px;">(点击查看)</div>
+                            </template>
+                        </wx-open-launch-weapp>
+                    </div>
+                    <div class="Parking-information-item">
+                        <span>入场时间</span>
+                        <span id="CarInTime"></span>
+                    </div>
+                    <div class="Parking-information-item">
+                        <span>已停时间</span>
+                        <span id="CarHowLong"></span>
+                    </div>
+                    <div class="Parking-information-item">
+                        <span>车辆类型</span>
+                        <span id="CarType"></span>
+                    </div>
+					<div class="Parking-information-item">
+					    <span>用户类型</span>
+					    <span id="UserType"></span>
+					</div>
+                    <div class="Parking-information-item">
+                        <span>停车区域</span>
+                        <span id="CarArea"></span>
+                    </div>
+					<div style="margin-top: 10px;">
+						<wx-open-launch-weapp id="launch-btn1" username="gh_4b1ee4a63c2d" style="display: flex">
+						    <template style="display: block;width: 100%;">
+								<div id="PayButton" style="margin:auto;width: 90%;border-radius: 4px;padding: 10px;font-size: 15px;border: none;background: #409EFE;color: #FFF;cursor: pointer;text-align: center;">我要出场</div>
+						    </template>
+						</wx-open-launch-weapp>
+					</div>
+                </div>
+            </div>
+            <div id="tabbar-bottom">
+                <div style="color: #14befe;display: flex;justify-content: center;align-items: center;">
+                    <div style="cursor: pointer;">
+                        <img src='https://pay.szzkc.com/H5Test/imgaes/index-current.png' width="30px">
+                        <div>缴费</div>
+                    </div>
+                </div>
+                <div style="display: flex;justify-content: center;align-items: center;">
+                    <div style="cursor: pointer;">
+                        <wx-open-launch-weapp id="launch-btn2" username="gh_4b1ee4a63c2d" path="pages/My/My">
+                            <template>
+                                <img width="30px" src="https://pay.szzkc.com/H5Test/imgaes/user.png" />
+                                <div style="font-size: 15px;">我的</div>
+                            </template>
+                        </wx-open-launch-weapp>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+
+        .content-title {
+            color: #FFF;
+            font-size: 14px;
+            background: #14befe;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            padding: 0 2%;
+            justify-content: space-between;
+            user-select: none;
+        }
+
+        .Parking-information-item {
+            display: flex;
+            justify-content: space-between;
+            color: #666;
+            line-height: 25px;
+        }
+
+        .button {
+            width: 100%;
+            border-radius: 4px;
+            padding: 15px;
+            font-size: 15px;
+            border: none;
+            background: #409EFE;
+            outline: none;
+            color: #FFF;
+            cursor: pointer;
+        }
+
+        .button:hover {
+            background: #66b1ff;
+        }
+        
+        .buttonDis {
+            width: 100%;
+            margin-top: 10px;
+            border-radius: 4px;
+            padding: 15px;
+            font-size: 15px;
+            border: none;
+            outline: none;
+            cursor: not-allowed;
+        }
+
+        .button-class {
+            background: #3a8ee6 !important;
+        }
+
+        #erweimaMask {
+            width: 100vw;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            z-index: 10;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            background: rgba(0, 0, 0, .7);
+            color: #FFF;
+            font-size: 15px;
+            display: none;
+            transition: 0.5s;
+            user-select: none;
+        }
+
+        #tabbar-bottom {
+            position: fixed;
+            bottom: 0;
+            display: flex;
+            width: 100%;
+            background: #FFF;
+            height: 60px;
+            align-items: center;
+			font-size: 15px;
+        }
+
+        #tabbar-bottom>div {
+            width: 50%;
+            text-align: center;
+        }
+    </style>
+    <script src="./convert.js"></script>
+    <script type="text/javascript">
+        let api = 'https://pay.szzkc.com/PMasterAPI/api/Pay';
+        let search = window.location.search;
+        let obj = strUrlObj(search.substr(search.indexOf('?') + 1));
+        let PayButton = document.getElementById("PayButton");
+        let FeeArea = document.getElementById("FeeArea");
+        let ua = window.navigator.userAgent;
+        let launch_btn = document.getElementById("launch-btn");
+		let launch_btn1 = document.getElementById('launch-btn1');
+        (_ => {
+            console.log(location.href);
+            console.log(location.href.substr(0,location.href.indexOf('code') - 1));
+            // if (!/MicroMessenger/.test(ua)&&!/AlipayClient/.test(ua)) return alert('请用微信或支付宝扫码！');
+            if (!/MicroMessenger/.test(ua)){
+                document.getElementById("img").innerText = '请先保存图片，然后在微信中扫码打开';
+                alert('请用微信扫码打开！');
+                return
+            }
+            if (search.indexOf('?') !== -1) {
+                // if ((obj.code == '' || obj.code == undefined) && /MicroMessenger/.test(ua)) {
+                //     WXAuthorizeCode(location.href);
+                //     return;
+                // }
+                
+                let request = new XMLHttpRequest();
+                request.onreadystatechange = _ => {
+                    if (request.readyState == 4 && request.status == 200) {
+                        let result = JSON.parse(request.responseText);
+                        if (result.Code == 0) {
+                            let res = JSON.parse(result.Data);
+                            wx.config({
+                                debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印
+                                appId: res.appId, // 必填，公众号的唯一标识
+                                timestamp: res.timestamp, // 必填，生成签名的时间戳
+                                nonceStr: res.nonceStr, // 必填，生成签名的随机串
+                                signature: res.signature, // 必填，签名
+                                jsApiList: ['chooseImage'], // 必填，需要使用的JS接口列表
+                                openTagList: ['wx-open-launch-weapp'] // 可选，需要使用的开放标签列表，例如['wx-open-launch-app']
+                            });
+                            launch_btn.addEventListener('launch', function(e) {
+                                console.log('success',e);
+                            });
+                            launch_btn.addEventListener('error', function(e) {
+                                console.log('fail', e);
+                                alert('fail', e.detail);
+                            });
+							launch_btn1.addEventListener('launch', function(e) {
+							    console.log('success',e);
+							});
+							launch_btn1.addEventListener('error', function(e) {
+							    console.log('fail', e);
+							    alert('fail', e.detail);
+							});
+                            var btn2 = document.getElementById('launch-btn2');
+                            btn2.addEventListener('launch', function(e) {
+                                console.log('success',e);
+                            });
+                            btn2.addEventListener('error', function(e) {
+                                console.log('fail', e);
+                                alert('fail', e.detail);
+                            });
+                            wx.ready(function(res) {
+                                console.log(res);
+                            });
+                            wx.error(err => {
+                                console.log(err);
+                                alert(JSON.stringify(err));
+                            });
+                        }
+                    }
+                }
+                request.open('GET', `${api}/GetOpenXcxPar?url=${encodeURIComponent(location.href)}`);
+                request.send();
+                
+                let xmlhttp = new XMLHttpRequest();
+                xmlhttp.onreadystatechange = _ => {
+                    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                        let res = JSON.parse(xmlhttp.responseText);
+                        if (res.Code == 0) {
+                            document.getElementById("CarNo").innerText = res.Data.CINo;
+                            launch_btn.setAttribute('path',`pages/index/ArrearageRecord?data=${res.Data.CINo}`);
+							launch_btn1.setAttribute('path',`pages/index/ConfirmExit?q=${encodeURIComponent(location.href)}`);
+							if (res.Data.ArrearageInfo) {
+								document.getElementById("TotalArrears").style.display = 'flex';
+								let arr = res.Data.ArrearageInfo.split(',');
+								document.getElementById("Arrears").innerText = `您有${arr[0]}笔欠费，共${Number(arr[1]).toFixed(2)}元`;
+								document.getElementById("CarMoney").innerText = `应付停车费：￥${Number(res.Data.CIMoney.toFixed(2)) + Number(Number(arr[1]).toFixed(2))}`;
+							} else {
+								document.getElementById("CarMoney").innerText = `应付停车费：￥${Number(res.Data.CIMoney).toFixed(2)}`;
+							}
+							if (res.Data.CIImg) {
+								let CarImg = document.getElementById("CarImg");
+								CarImg.src = res.Data.CIImg;
+								CarImg.style.display = 'block';
+							}
+							document.getElementById("CurrentExpenses").innerText = `￥${Number(res.Data.CIMoney).toFixed(2)}`;
+                            document.getElementById("CarInTime").innerText = FormatDateTime(res.Data.CIInTime);
+                            document.getElementById("CarHowLong").innerText = res.Data.HowLong;
+                            document.getElementById("CarType").innerText = res.Data.CICarType;
+                            document.getElementById("CarArea").innerText = res.Data.CIParkName + '/' + res.Data.CIStall;
+							document.getElementById("UserType").innerText = res.Data.CIUserType;
+							
+                            FeeArea.style.display = 'block';
+                            if (res.Data.CIPayStatus == 10) {
+                                PayButton.disabled = true;
+                                PayButton.classList.remove('button');
+                                PayButton.classList.add('buttonDis');
+                                PayButton.innerText = '已支付';
+                            }
+        
+        
+                            // let http = new XMLHttpRequest();
+                            // http.onreadystatechange = _ => {
+                            //     if (http.readyState == 4 && http.status == 200) {
+                            //         let result = JSON.parse(http.responseText);
+                            //         if (result.Code == 0 && result.Data.length) {
+                            //             let sum = 0;
+                            //             for (let s of result.Data) {
+                            //                 sum += s.CIMoney;
+                            //             }
+                            //             document.getElementById("Arrears").innerText = `您有${result.Data.length}笔欠费，共${sum.toFixed(2)}元`
+                            //         }
+                            //     }
+                            // }
+                            // http.open('GET', `${api}/UserGetArrearageList?CarNo=${res.Data.CINo}`, true);
+                            // http.send();
+                        }
+                    }
+                }
+                xmlhttp.open('GET', `${api}/GetCarInfo${search}`, true);
+                xmlhttp.send();
+            }
+        })()
+        
+        function WXAuthorizeCode(href){
+            let xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = _ => {
+                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                    location.href = xmlhttp.responseText;
+                }
+            }
+            xmlhttp.open('GET', `${api}/WXAuthorizeCode?url=${encodeURIComponent(href)}`, false);
+            xmlhttp.send();
+        }
+        
+        function weixinPay(data) {
+            WeixinJSBridge.invoke('getBrandWCPayRequest', {
+                "appId": data.appId,
+                "timeStamp": data.timeStamp,
+                "nonceStr": data.nonceStr,
+                "package": data.package,
+                "signType": data.signType,
+                "paySign": data.paySign
+            }, function(res) {
+                if (res.err_msg == "get_brand_wcpay_request:ok") {
+                    // 使用以上方式判断前端返回,微信团队郑重提示：
+                    //res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
+                } else {
+                    WXAuthorizeCode(location.href.substr(0,location.href.indexOf('code') - 1));
+                }
+            })
+        }
+        
+        function Pay() {
+            let PayType = 'micromessenger';
+            if (/MicroMessenger/.test(ua)) {
+                PayType = 'micromessenger';
+            } else if (/AlipayClient/.test(ua)) {
+                PayType = 'alipayclient';
+            }
+            if (PayButton.innerText == '立即缴费') {
+                let xmlhttp = new XMLHttpRequest();
+                xmlhttp.onreadystatechange = _ => {
+                    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                        let res = JSON.parse(xmlhttp.responseText);
+                        if (res.Code == 0) {
+                            if (/MicroMessenger/.test(ua)) {
+                                if (typeof WeixinJSBridge == "undefined") {
+                                    if (document.addEventListener) {
+                                        document.addEventListener("WeixinJSBridgeReady", weixinPay, false);
+                                    } else if (document.attachEvent) {
+                                        document.attachEvent("WeixinJSBridgeReady", weixinPay);
+                                        document.attachEvent("onWeixinJSBridgeReady", weixinPay);
+                                    }
+                                } else {
+                                    weixinPay(JSON.parse(res.Data));
+                                }
+                            } else if (/AlipayClient/.test(ua)) {
+                                location.href = res.Data;
+                            }
+                        } else {
+                            alert(res.Msg);
+                        }
+                    }
+                }
+                xmlhttp.open('GET', `${api}/JSAPIPay?PCode=${obj.code}&CIID=${obj.CIID}&CarId=${obj.CarId}&PayType=${PayType}`);
+                xmlhttp.send();
+            } else {
+                let xmlhttp = new XMLHttpRequest();
+                xmlhttp.onreadystatechange = _ => {
+                    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                        let res = JSON.parse(xmlhttp.responseText);
+                        if (!res.Code) {
+                            alert('出场成功，请尽快离场！');
+                            PayButton.disabled = true;
+                            PayButton.classList.remove('button');
+                            PayButton.classList.add('buttonDis');
+                            PayButton.innerText = '已出场';
+                        }
+                    }
+                }
+                xmlhttp.open('GET', `${api}/ZeroPayOut?CIID=${obj.CIID}&CarId=${obj.CarId}&PayType=${PayType}`);
+                xmlhttp.send();
+            }
+        }
+        
+        function buttonStyle(element, classBool) {
+            setTimeout(_ => {
+                classBool ? element.classList.add('button-class') : element.classList.remove('button-class');
+            }, 200)
+        }
+        
+        function Mask(bool) {
+            document.getElementById("erweimaMask").style.display = bool ? 'flex' : 'none';
+        }
+    </script>
+</html>
