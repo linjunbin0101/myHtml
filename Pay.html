@@ -15,6 +15,9 @@
         let search = window.location.search;
         let api = 'https://pay.szzkc.com/PMasterAPI/api/Pay';
         (_ => {
+
+            location.href = `https://pay.szzkc.com/PMasterWeb/Pay.html?CIID=e7fc1cc8-d690-4313-a38e-e0c719013393&CarNo=%E5%86%80YUUUT5&CarId=5f20df16-2e5f-4dc9-b332-140353d56422`
+
             console.log(location.href, "location.href");
             console.log(location.href.substr(0, location.href.indexOf('code') - 1));
 
